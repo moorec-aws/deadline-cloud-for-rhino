@@ -1,5 +1,5 @@
-<!-- Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. -->
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. -->
 <RhinoUI major_ver="5" minor_ver="0" guid="18f7c445-3f30-499e-a343-9257ba06b697" localize="False" default_language_id="1033" dpi_scale="150">
   <extend_rhino_menus />
   <menus />
@@ -21,6 +21,9 @@
       </text>
       <script>_Save
 -_RunPythonScript (
+
+#! python3
+
 import os
 import sys
 import json
@@ -36,6 +39,13 @@ DEADLINE_PYTHON = os.getenv('DEADLINE_PYTHON')
 # Path to rhino submitter __main__ module
 # In dev mode: src/deadlne/rhino_submitter
 DEADLINE_RHINO = os.getenv('DEADLINE_RHINO')
+
+if not DEADLINE_PYTHON:
+    rs.MessageBox('Environment variable DEADLINE_PYTHON not set. Please set DEADLINE_PYTHON to point to an installation of Python with deadline and Pyside2 installed.')
+    raise RuntimeError("Environment variable DEADLINE_PYTHON not set")
+if not DEADLINE_RHINO:
+    rs.MessageBox('Environment variable DEADLINE_RHINO not set. Please set DEADLINE_RHINO to point to the rhino_submitter folder.')
+    raise RuntimeError("Environment variable DEADLINE_RHINO not set")
 
 def _get_textures():
     files = []
@@ -83,7 +93,23 @@ rhino_info = {
 _, info_file = tempfile.mkstemp(suffix='.json')
 with open(info_file, 'w') as f:
     json.dump(rhino_info, f)
-subprocess.call([DEADLINE_PYTHON, DEADLINE_RHINO, info_file])
+
+# Rhino 8 sets the PYTHONHOME environment variable. It needs to be cleared
+# for the subprocess that the submitter is launched in to be able to find
+# the correct dependency libraries.
+# https://discourse.mcneel.com/t/rhino8-python-subprocess-check-output-error/171300/5
+current_env_copy = os.environ.copy()
+current_env_copy['PYTHONHOME'] = ''
+
+try:
+  subprocess.run([DEADLINE_PYTHON, DEADLINE_RHINO, info_file],
+    env=current_env_copy,
+    check=True,
+    capture_output=True,
+    text=True
+  )
+except subprocess.CalledProcessError as e:
+  rs.MessageBox(f'AWS Deadline Cloud Rhino submitter could not open: {e.stderr}')
 )</script>
     </macro_item>
   </macros>

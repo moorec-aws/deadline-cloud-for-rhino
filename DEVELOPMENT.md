@@ -48,6 +48,7 @@ hatch run all:test
       - e.g. On Windows if the source was on the user's desktop it might be  `set DEADLINE_RHINO="C:/Users/<USER>/Desktop/deadline-cloud-for-rhino/src/deadline/rhino_submitter"`
 4. Launch Rhino with the environment variables from step 2. set.
 5. Install the submitter into the Rhino toolbar `<PATH TO>/deadline-cloud-for-rhino/rhino_script/deadlinecloud.rui`
+  - Window -> Toolbars -> File -> Open -> `<PATH TO>/deadline-cloud-for-rhino/rhino_script/deadlinecloud.rui` -> select AWS Deadline
 
 ## Worker Development Workflow
 
