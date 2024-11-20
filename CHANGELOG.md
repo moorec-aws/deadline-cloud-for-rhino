@@ -1,3 +1,10 @@
+## 0.1.4 (2024-11-20)
+
+
+
+### Bug Fixes
+* submitter unable to open (#50) ([`74157be`](https://github.com/aws-deadline/deadline-cloud-for-rhino/commit/74157bed6ece35ca7a37d943af0102b250c9185c))
+
 ## 0.1.3 (2024-05-01)
 
 ### Dependencies
